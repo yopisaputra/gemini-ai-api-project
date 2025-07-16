@@ -2,6 +2,7 @@
 /shelf/
 /workspace.xml
 .env
+node_modules/
 # Editor-based HTTP Client requests
 /httpRequests/
 # Datasource local storage ignored files

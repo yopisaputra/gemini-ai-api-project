@@ -11,7 +11,7 @@ const app = express();
 app.use(express.json());
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-const model = genAI.getGenerativeModel({ model: 'models/gemini-1.5-flash' });
+const model = genAI.getGenerativeModel({ model: 'gemini-2.5-pro' });
 
 const upload = multer({ dest: 'uploads/' });
 
@@ -23,12 +23,12 @@ app.listen(PORT, () => {
 
 /* Implementasi Teks */
 app.post('/generate-text', async (req, res) => {
-    const { prompt } = req.body;
+    const { prompt, prompt2, prompt3 } = req.body;
 
     try {
-        const result = await model.generateContent(prompt);
-        const response = await result.response;
-        res.json( {output: response.text() } )
+        const result = await model.generateContent( [prompt, prompt2, prompt3] );
+        const response = result.response;
+        res.status(200).json( {output: response.text() } )
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
