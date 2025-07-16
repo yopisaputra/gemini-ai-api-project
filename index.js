@@ -12,24 +12,12 @@ app.use(express.json());
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 const model = genAI.getGenerativeModel({model: 'gemini-2.5-pro'});
-/*const model = genAI.getGenerativeModel(
-    {
-        model: 'models/gemini-1.5-flash',
-        generationConfig: {
-            maxOutputTokens: 50,
-            temperature: 0.7,
-            topP: 0.8
-        }});
-            */
-
 
 const upload = multer({ dest: 'uploads/' });
-
 const PORT = 3000;
 app.listen(PORT, () => {
     console.log(`Gemini API server is running on http://localhost:${PORT}`);
 })
-
 
 /* Implementasi Teks */
 app.post('/generate-text', async (req, res) => {
