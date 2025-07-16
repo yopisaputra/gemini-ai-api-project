@@ -11,7 +11,17 @@ const app = express();
 app.use(express.json());
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-const model = genAI.getGenerativeModel({ model: 'gemini-2.5-pro' });
+const model = genAI.getGenerativeModel({model: 'gemini-2.5-pro'});
+/*const model = genAI.getGenerativeModel(
+    {
+        model: 'models/gemini-1.5-flash',
+        generationConfig: {
+            maxOutputTokens: 50,
+            temperature: 0.7,
+            topP: 0.8
+        }});
+            */
+
 
 const upload = multer({ dest: 'uploads/' });
 
@@ -37,7 +47,17 @@ app.post('/generate-text', async (req, res) => {
 /* Implementasi Gambar */
 app.post('/generate-from-image', upload.single('image'), async (req, res) => {
     const prompt = req.body.prompt || "Describe the image";
-    const image = imageToGenerativePart(req.file.path);
+
+    const buffer = fs.readFileSync(req.file.path);
+    const base64Image = buffer.toString('base64');
+    const mimeType = req.file.mimetype;
+
+    const image = {
+        inlineData: {
+            data: base64Image,
+            mimeType: mimeType
+        }
+    };
 
     try {
         const result = await model.generateContent([prompt, image]);
@@ -48,7 +68,7 @@ app.post('/generate-from-image', upload.single('image'), async (req, res) => {
     } finally {
         fs.unlinkSync(req.file.path);
     }
-})
+});
 
 /* Implementasi File */
 app.post('/generate-from-document', upload.single('document'), async (req, res) => {
